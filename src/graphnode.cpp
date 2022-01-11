@@ -11,7 +11,10 @@ GraphNode::~GraphNode()
     //// STUDENT CODE
     ////
 
-    delete _chatBot; 
+    // This code causes the initial crash
+    // I believe this is because the _chatBot object gets destroyed when closing the application
+    // anyhow and this attempts to do it as well when the GraphNode object gets destroyed
+    // delete _chatBot; 
 
     ////
     //// EOF STUDENT CODE

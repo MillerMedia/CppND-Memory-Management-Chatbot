@@ -11,6 +11,8 @@
 // constructor WITHOUT memory allocation
 ChatBot::ChatBot()
 {
+    std::cout << "ChatBot Constructor No Arguments" << std::endl;
+
     // invalidate data handles
     _image = nullptr;
     _chatLogic = nullptr;
@@ -33,7 +35,9 @@ ChatBot::ChatBot(std::string filename)
 ChatBot::~ChatBot()
 {
     std::cout << "ChatBot Destructor" << std::endl;
+    std::cout << "Image Address: " << _image << std::endl;
 
+    // Chatbot Destructor is called twice on close of application
     // deallocate heap memory
     if(_image != NULL) // Attention: wxWidgets used NULL and not nullptr
     {
