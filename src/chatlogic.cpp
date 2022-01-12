@@ -19,11 +19,14 @@ ChatLogic::ChatLogic()
     //// STUDENT CODE
     ////
 
+  	// ChatLogic should have no ownership. Declaring object here (in the constructor) would put ownership of this ChatBot instance
+  	// in the scope of ChatLogic
+  
     // create instance of chatbot
-    _chatBot = new ChatBot("../images/chatbot.png");
+    //_chatBot = new ChatBot("../images/chatbot.png");
 
     // add pointer to chatlogic so that chatbot answers can be passed on to the GUI
-    _chatBot->SetChatLogicHandle(this);
+    //_chatBot->SetChatLogicHandle(this);
 
     ////
     //// EOF STUDENT CODE
@@ -248,10 +251,26 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
         }
     }
 
+  	// Instantiate local ChatBot.
+  // This will release the object once it falls out of scope and allow it to more easily be moved through the application
+  	ChatBot LocalChatbot = ChatBot("../images/chatbot.png");
+  	
+  	// Hands off new local class to the ChatLogic _chatbot variable for use
+  	SetChatbotHandle(&LocalChatbot);
+  
     // add chatbot to graph root node
     _chatBot->SetRootNode(rootNode);
+  
+  	// Before moving, set ChatLogic on Chatbot so it knows it's association before moving to other places
+  /*
+  I still have some confusion on this. This works when passing 'this' (i.e. the current ChatLogic object) but the void function on Chatbot
+  takes a pointer (*ChatLogic). When I try '&this' or '*this' it doesn't work. I figured I was supposed to pass the pointer to the object,
+  not the object itself.
+  */
+  	_chatBot->SetChatLogicHandle(this);
+  
     rootNode->MoveChatbotHere(_chatBot);
-    
+  
     ////
     //// EOF STUDENT CODE
 }
