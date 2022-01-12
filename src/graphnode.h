@@ -25,7 +25,9 @@ private:
     // No need for unique pointer here as the node will not own this vector
     std::vector<GraphEdge *> _parentEdges; // edges to preceding nodes 
     
-    ChatBot *_chatBot;
+    
+    // Moving full chatbot object; changed from a pointer to an object
+    ChatBot _chatBot;
 
     ////
     //// EOF STUDENT CODE
@@ -54,7 +56,7 @@ public:
     //// STUDENT CODE
     ////
 
-    void MoveChatbotHere(ChatBot *chatbot);
+    void MoveChatbotHere(ChatBot chatbot);
 
     ////
     //// EOF STUDENT CODE

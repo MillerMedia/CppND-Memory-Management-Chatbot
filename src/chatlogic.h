@@ -20,7 +20,7 @@ private:
     // data handles (owned)
     
     //std::vector<GraphNode *> _nodes;
-    std::vector<GraphEdge *> _edges;
+    //std::vector<GraphEdge *> _edges;
     
     // Alter for vectors to hold unique pointers to GraphNode and GraphEdge
     std::vector<std::unique_ptr<GraphNode>> _nodes;

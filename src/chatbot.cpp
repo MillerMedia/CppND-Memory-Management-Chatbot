@@ -52,10 +52,17 @@ ChatBot::~ChatBot()
 // Rule of five is:
 // 1 Destructor (done above)
 
+
+/*
+@TODO add logic within these functions
+*/
+
 // 2 Copy Constructor
 ChatBot::ChatBot(const ChatBot &source) // 2 : copy constructor
 {
 	std::cout << "ChatBot Copy Constructor" << std::endl;
+  
+
   
 }
 
@@ -63,6 +70,8 @@ ChatBot::ChatBot(const ChatBot &source) // 2 : copy constructor
 ChatBot& ChatBot::operator=(const ChatBot &source) // 3 : copy assignment operator
 {
 	std::cout << "ChatBot Assignment Operator" << std::endl;
+  
+
 
 }
 
@@ -70,12 +79,16 @@ ChatBot& ChatBot::operator=(const ChatBot &source) // 3 : copy assignment operat
 ChatBot::ChatBot(ChatBot &&source)
 {
   std::cout << "ChatBot Move Constructor" << std::endl;
+  
+
 
 }
 
 // 5 Move Assignment Operator
 ChatBot& ChatBot::operator=(ChatBot &&source) {
     std::cout << "ChatBot Move Assignment Operator" << std::endl;
+  
+
     
 }
 

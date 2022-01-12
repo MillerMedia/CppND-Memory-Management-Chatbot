@@ -195,7 +195,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                           	edge->SetParentNode((*parentNode).get());
                             
                           // Use get() here instead of move since we still need the object existing after this function and are just storing its value in the _edges vector
-                          	_edges.push_back(edge.get());
+                          	//_edges.push_back(edge.get());
 
                             // find all keywords for current node
                             AddAllTokensToElement("KEYWORD", tokens, *edge);
@@ -256,10 +256,10 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
   	ChatBot LocalChatbot = ChatBot("../images/chatbot.png");
   	
   	// Hands off new local class to the ChatLogic _chatbot variable for use
-  	SetChatbotHandle(&LocalChatbot);
-  
+  	//SetChatbotHandle(&_chatbot);
+  	LocalChatbot.SetChatLogicHandle(this);
     // add chatbot to graph root node
-    _chatBot->SetRootNode(rootNode);
+    LocalChatbot.SetRootNode(rootNode);
   
   	// Before moving, set ChatLogic on Chatbot so it knows it's association before moving to other places
   /*
@@ -267,9 +267,8 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
   takes a pointer (*ChatLogic). When I try '&this' or '*this' it doesn't work. I figured I was supposed to pass the pointer to the object,
   not the object itself.
   */
-  	_chatBot->SetChatLogicHandle(this);
-  
-    rootNode->MoveChatbotHere(_chatBot);
+  	
+    rootNode->MoveChatbotHere(std::move(LocalChatbot));
   
     ////
     //// EOF STUDENT CODE
