@@ -30,9 +30,11 @@ void GraphNode::AddEdgeToParentNode(GraphEdge *edge)
     _parentEdges.push_back(edge);
 }
 
-void GraphNode::AddEdgeToChildNode(GraphEdge *edge)
+// This function was not between student code blocks but due to use moving the object (not just storing its value; I had to update it)
+// Moving the entire unique pointer so I will set the argument to that type
+void GraphNode::AddEdgeToChildNode(unique_ptr<GraphEdge> edge)
 {
-    _childEdges.push_back(edge);
+    _childEdges.push_back(std::move(edge));
 }
 
 //// STUDENT CODE
@@ -56,7 +58,7 @@ GraphEdge *GraphNode::GetChildEdgeAtIndex(int index)
     //// STUDENT CODE
     ////
 
-    return _childEdges[index];
+    return (_childEdges[index]).get();
 
     ////
     //// EOF STUDENT CODE

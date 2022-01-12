@@ -183,21 +183,25 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                           );
 
                             // create new edge
-                            GraphEdge *edge = new GraphEdge(id);
+                          // Revisiting on task 4. Graph edges objects are now unique pointers in the _childEdges vector when owned by GraphNode
+                            unique_ptr<GraphEdge> edge = make_unique<GraphEdge>(id);
                             
                           	// Since child node is a unique pointer owned by ChatLogic, we need to get the value of child node and parent node and pass them through to the GraphEdge object rather
                           	// than pass through the actual pointer
                           	edge->SetChildNode((*childNode).get());                            
                           	edge->SetParentNode((*parentNode).get());
                             
-                          	_edges.push_back(edge);
+                          // Use get() here instead of move since we still need the object existing after this function and are just storing its value in the _edges vector
+                          	_edges.push_back(edge.get());
 
                             // find all keywords for current node
                             AddAllTokensToElement("KEYWORD", tokens, *edge);
 
                             // store reference in child node and parent node
-                            (*childNode)->AddEdgeToParentNode(edge);
-                            (*parentNode)->AddEdgeToChildNode(edge);
+                          
+                          // Parent node is non-unique; child node is unique. So we will store the get() value in the child node and then move the entire unique pointer to the child node
+                            (*childNode)->AddEdgeToParentNode(edge.get());
+                            (*parentNode)->AddEdgeToChildNode(std::move(edge));
                         }
 
                         ////
