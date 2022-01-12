@@ -29,6 +29,21 @@ public:
 
     //// STUDENT CODE
     ////
+    
+    // Declaring assignment operators and constructors for copy and move
+    
+    // Copy Constructor
+    ChatBot(const ChatBot&);
+    
+    // Copy assignment operator
+    // Found a pretty clear example of this on SO: https://stackoverflow.com/a/13074634/975592
+    ChatBot& operator=(const ChatBot&);
+    
+    // Move Constructor
+    ChatBot(ChatBot&&);
+    
+    // Move assignment operator
+    ChatBot& operator=(ChatBot&&);
 
     ////
     //// EOF STUDENT CODE
