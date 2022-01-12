@@ -11,6 +11,8 @@
 #include "chatbot.h"
 #include "chatlogic.h"
 
+using std::make_unique;
+using std::unique_ptr;
 
 ChatLogic::ChatLogic()
 {
@@ -33,19 +35,21 @@ ChatLogic::~ChatLogic()
     ////
 
     // delete chatbot instance
-    delete _chatBot;
+    //delete _chatBot;
 
     // delete all nodes
-    for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
+  // Now that nodes contain unique pointers, they will be automatically deallocated when out of scope
+  
+    /*for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
     {
         delete *it;
-    }
+    }*/
 
     // delete all edges
-    for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
+    /*for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
     {
         delete *it;
-    }
+    }*/
 
     ////
     //// EOF STUDENT CODE
@@ -127,12 +131,21 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                         ////
 
                         // check if node with this ID exists already
-                        auto newNode = std::find_if(_nodes.begin(), _nodes.end(), [&id](GraphNode *node) { return node->GetID() == id; });
+                      // Took me way too long to add the ampersand in front of the variable (and likewise below). I'm not entirely sure why, would love some clarification on this
+                      // in the review. Is this because the ampersand passes the address value of the node through to then be able to use the GetID() function and if we don't have
+                      // the & it is trying to run function GetID() on a unique_ptr object?
+                        auto newNode = std::find_if(
+                          _nodes.begin(), _nodes.end(), [&id](unique_ptr<GraphNode> &node) {
+                            return node->GetID() == id;
+                          }
+                        );
 
                         // create new element if ID does not yet exist
                         if (newNode == _nodes.end())
                         {
-                            _nodes.emplace_back(new GraphNode(id));
+                          // In the lesson, basically learned never to use 'new' if you can avoid it
+                          // A great SO answer on this topic here: https://stackoverflow.com/a/37514601/975592
+                            _nodes.emplace_back(make_unique<GraphNode>(id));
                             newNode = _nodes.end() - 1; // get iterator to last element
 
                             // add all answers to current node
@@ -155,15 +168,29 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
 
                         if (parentToken != tokens.end() && childToken != tokens.end())
                         {
-                            // get iterator on incoming and outgoing node via ID search
-                            auto parentNode = std::find_if(_nodes.begin(), _nodes.end(), [&parentToken](GraphNode *node) { return node->GetID() == std::stoi(parentToken->second); });
-                            auto childNode = std::find_if(_nodes.begin(), _nodes.end(), [&childToken](GraphNode *node) { return node->GetID() == std::stoi(childToken->second); });
+                          // get iterator on incoming and outgoing node via ID search
+                          // Added new lines and indents to make more readable while editing
+                          auto parentNode = std::find_if(
+                            _nodes.begin(), _nodes.end(), [&parentToken](unique_ptr<GraphNode> &node) {
+                              return node->GetID() == std::stoi(parentToken->second);
+                            }
+                          );
+                          
+                          auto childNode = std::find_if(
+                            _nodes.begin(), _nodes.end(), [&childToken](unique_ptr<GraphNode> &node) {
+                              return node->GetID() == std::stoi(childToken->second);
+                            }
+                          );
 
                             // create new edge
                             GraphEdge *edge = new GraphEdge(id);
-                            edge->SetChildNode(*childNode);
-                            edge->SetParentNode(*parentNode);
-                            _edges.push_back(edge);
+                            
+                          	// Since child node is a unique pointer owned by ChatLogic, we need to get the value of child node and parent node and pass them through to the GraphEdge object rather
+                          	// than pass through the actual pointer
+                          	edge->SetChildNode((*childNode).get());                            
+                          	edge->SetParentNode((*parentNode).get());
+                            
+                          	_edges.push_back(edge);
 
                             // find all keywords for current node
                             AddAllTokensToElement("KEYWORD", tokens, *edge);
@@ -206,7 +233,9 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
 
             if (rootNode == nullptr)
             {
-                rootNode = *it; // assign current node to root
+              // Same as above; need to get the value
+              // Perhaps this is incorrect? Should I be using other move semantics (i.e. std::move()?). I tried and it failed...
+                rootNode = (*it).get(); // assign current node to root
             }
             else
             {
